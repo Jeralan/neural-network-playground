@@ -4,6 +4,8 @@ from tkinter import *
 import numpy as np
 import os
 
+#Neural Network Playground Modal App
+
 class Playground(ModalApp):
     def appStarted(self):
         self.promptMode =  PromptMode()
@@ -19,6 +21,7 @@ class DataButton(Mode):
         self.x = x
         self.y = y
         self.name = name
+
     def draw(self,canvas):
         canvas.create_rectangle(self.x-40,self.y-10,self.x+40,self.y+10)
         canvas.create_text(self.x,self.y,text=self.name)
@@ -45,6 +48,7 @@ class InputMode(Mode):
                     for i in range(len(self.x)):
                         self.x[i] = list(self.x[i])
                 else:
+                    #custom inputted data gets split up into testing, validation, and training in order
                     xList = self.x
                     yList = list(np.load(button.name))
                     testSplit = int(self.app.testSplit*len(xList))
@@ -61,8 +65,6 @@ class InputMode(Mode):
                     yList = yList[valSplit:]
                     self.app.xTrain,self.app.yTrain = xList,yList
                     self.app.setActiveMode(self.app.gameMode)
-
-
 
     def redrawAll(self,canvas):
         fileSpace = len(self.dataFiles)*90
@@ -83,8 +85,6 @@ class FinalMode(Mode):
 
     def keyPressed(self,event):
         self.app.appStarted()
-
-
 
 def tupleReLU(L):
     L = list(L)
@@ -114,6 +114,7 @@ class GameMode(Mode):
         self.xTrain,self.xVal,self.xTest = self.app.xTrain,self.app.xVal,self.app.xTest
         self.yTrain,self.yVal,self.yTest = self.app.yTrain,self.app.yVal,self.app.yTest
         if isinstance(self.app.xTrain[0],int):
+            #normalizing data if it has only one input neuron
             self.customInput = False
             self.xMax,self.xMin = max(self.xTrain),min(self.xTrain)
             self.yMax,self.yMin = max(self.yTrain),min(self.yTrain)
@@ -131,7 +132,7 @@ class GameMode(Mode):
         else: 
             self.customInput = True
         self.layers = len(self.hiddenSizes)
-        self.timerDelay = 50
+        self.timerDelay = 1
         self.currentLayer = 1
         self.forwardState = True
         self.weightChecking = None
